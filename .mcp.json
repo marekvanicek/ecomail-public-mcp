@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "ecomail-dev": {
+      "command": "node",
+      "args": ["dist/index.js", "--key", "${ECOMAIL_API_KEY}"],
+      "env": {}
+    }
+  }
+}
