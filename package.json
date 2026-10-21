@@ -1,6 +1,6 @@
 {
   "name": "ecomail-mcp",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "MCP server for the Ecomail API — manage lists, subscribers, campaigns, automations, transactional emails, transactions, templates, domains, and more from any AI assistant",
   "keywords": [
     "ecomail",

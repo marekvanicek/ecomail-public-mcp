@@ -1,5 +1,7 @@
 const BASE_URL = 'https://api2.ecomailapp.cz';
 
+type QueryParams = Record<string, string | number | string[] | undefined>;
+
 export class EcomailClient {
   private apiKey: string;
 
@@ -11,13 +13,18 @@ export class EcomailClient {
     method: string,
     path: string,
     body?: Record<string, unknown>,
-    query?: Record<string, string | number | undefined>,
+    query?: QueryParams,
   ): Promise<T> {
     const url = new URL(`${BASE_URL}${path}`);
 
     if (query) {
       for (const [key, value] of Object.entries(query)) {
-        if (value !== undefined) {
+        if (Array.isArray(value)) {
+          // Laravel reads arrays from the query string as key[]=a&key[]=b
+          for (const item of value) {
+            url.searchParams.append(`${key}[]`, item);
+          }
+        } else if (value !== undefined) {
           url.searchParams.set(key, String(value));
         }
       }
@@ -69,17 +76,14 @@ export class EcomailClient {
     return JSON.parse(text) as T;
   }
 
-  async get<T>(
-    path: string,
-    query?: Record<string, string | number | undefined>,
-  ): Promise<T> {
+  async get<T>(path: string, query?: QueryParams): Promise<T> {
     return this.request<T>('GET', path, undefined, query);
   }
 
   async post<T>(
     path: string,
     body?: Record<string, unknown>,
-    query?: Record<string, string | number | undefined>,
+    query?: QueryParams,
   ): Promise<T> {
     return this.request<T>('POST', path, body, query);
   }
@@ -87,7 +91,7 @@ export class EcomailClient {
   async put<T>(
     path: string,
     body?: Record<string, unknown>,
-    query?: Record<string, string | number | undefined>,
+    query?: QueryParams,
   ): Promise<T> {
     return this.request<T>('PUT', path, body, query);
   }
@@ -95,7 +99,7 @@ export class EcomailClient {
   async delete<T>(
     path: string,
     body?: Record<string, unknown>,
-    query?: Record<string, string | number | undefined>,
+    query?: QueryParams,
   ): Promise<T> {
     return this.request<T>('DELETE', path, body, query);
   }

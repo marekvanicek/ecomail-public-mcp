@@ -127,9 +127,9 @@ export function addAutomationTools(server: McpServer, ecomail: EcomailClient) {
           .describe('Filter from date (YYYY-MM-DD, UTC)'),
         per_page: z
           .number()
-          .max(5000)
+          .max(100)
           .optional()
-          .describe('Results per page (max 5000)'),
+          .describe('Results per page (max 100)'),
         page: z.number().optional().describe('Page number'),
       },
     },
@@ -186,23 +186,28 @@ export function addAutomationTools(server: McpServer, ecomail: EcomailClient) {
         'Fetch engagement statistics for multiple email addresses in an automation.',
       inputSchema: {
         automation_id: z.number().describe('Automation ID'),
-        emails: z.array(z.email()).min(1).describe('Array of email addresses'),
+        emails: z
+          .array(z.email())
+          .min(1)
+          .max(100)
+          .describe('Array of email addresses (max 100)'),
         per_page: z
           .number()
-          .max(5000)
+          .max(100)
           .optional()
-          .describe('Results per page (max 5000)'),
+          .describe('Results per page (max 100)'),
         page: z.number().optional().describe('Page number'),
       },
     },
     async ({ automation_id, emails, per_page, page }) => {
-      const query: Record<string, string | number | undefined> = {};
+      const query: Record<string, string | number | string[] | undefined> = {
+        emails,
+      };
       if (per_page) query.per_page = per_page;
       if (page) query.page = page;
 
-      const response = await ecomail.post<any>(
+      const response = await ecomail.get<any>(
         `/pipelines/${automation_id}/stats-detail`,
-        { emails },
         query,
       );
 
