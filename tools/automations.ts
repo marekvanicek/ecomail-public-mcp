@@ -186,11 +186,7 @@ export function addAutomationTools(server: McpServer, ecomail: EcomailClient) {
         'Fetch engagement statistics for multiple email addresses in an automation.',
       inputSchema: {
         automation_id: z.number().describe('Automation ID'),
-        emails: z
-          .array(z.email())
-          .min(1)
-          .max(100)
-          .describe('Array of email addresses (max 100)'),
+        emails: z.array(z.email()).min(1).describe('Array of email addresses'),
         per_page: z
           .number()
           .max(100)
